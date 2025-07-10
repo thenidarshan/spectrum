@@ -217,17 +217,17 @@
     "event-stream": "3.3.4"
   },
   "scripts": {
-    "start": "NODE_ENV=production node main.js",
+    "start": "NODE_ENV=production node build-api/main.js",
     "start:api": "cross-env NODE_ENV=production node build-api/main.js",
     "dev:web": "cross-env NODE_PATH=./ react-app-rewired start",
-    "dev:api": "cross-env FILE_STORAGE=local cross-env NODE_PATH=./ cross-env NODE_ENV=development cross-env DEBUG=build*,api*,shared:rethinkdb:db-query-cache,-api:resolvers cross-env DIR=api backpack",
+    "dev:api": "cross-env FILE_STORAGE=local cross-env NODE_PATH=./ cross-env NODE_ENV=development cross-env DEBUG=build*,api*,shared:rethinkdb:db-query-cache,-api:resolvers cross-env DIR=api node api/index.js",
     "dev:api:s3": "cross-env FILE_STORAGE=s3 cross-env NODE_PATH=./ cross-env NODE_ENV=development cross-env DEBUG=build*,api*,shared:rethinkdb:db-query-cache,-api:resolvers cross-env DIR=api backpack",
     "dev:hyperion": "cross-env NODE_PATH=./ cross-env NODE_ENV=development cross-env DEBUG=build*,hyperion*,-hyperion:resolvers cross-env DIR=hyperion backpack",
     "prebuild:api": "rimraf build-api",
-    "build:api": "cross-env NODE_PATH=./ cross-env DIR=api backpack build",
+    "build:api": "cross-env NODE_PATH=./ mkdir -p build-api && cp -r api/* build-api/",
     "postbuild:api": "cp api/package.json build-api/package.json && cp now.json build-api/now.json && cpy cacert build-api",
     "prebuild:hyperion": "rimraf build && yarn run build:web && rimraf build-hyperion",
-    "build:hyperion": "cross-env NODE_PATH=./ cross-env DIR=hyperion backpack build",
+    "build:hyperion": "cross-env NODE_PATH=./ mkdir -p build-hyperion && cp -r hyperion/* build-hyperion/",
     "postbuild:hyperion": "cp -r build build-hyperion && cp now.json build-hyperion && cp yarn.lock build-hyperion && cp package.json build-hyperion && cp cacert build-hyperion",
     "build:web": "cross-env NODE_PATH=./ react-app-rewired build",
     "jest": "cross-env NODE_PATH=./ jest",
@@ -249,7 +249,10 @@
     "lint:staged": "lint-staged",
     "webpack-defaults": "webpack-defaults",
     "deploy": "node scripts/deploy",
-    "heroku": "node scripts/heroku-deploy"
+    "heroku": "node scripts/heroku-deploy",
+    "setup": "npm run install:deps && npm run db:setup",
+    "install:deps": "npm install",
+    "db:setup": "echo 'Database setup - please ensure RethinkDB is running'"
   },
   "lint-staged": {
     "*.js": [
